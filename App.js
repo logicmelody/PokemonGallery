@@ -1,49 +1,92 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- */
+import React, { Component } from "react";
+import { View } from "react-native";
 
-import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
+import pokemon from "./src/data/pokemon";
+import pokemon_stats from "./src/data/pokemon-stats";
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
-  android:
-    'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
+import Header from "./src/components/Header";
+import CardList from "./src/components/CardList";
+import AnimatedModal from "./src/components/AnimatedModal";
+import BigCard from "./src/components/BigCard";
+
+function getRandomInt(max, min) {
+	return Math.floor(Math.random() * (max - min) + min);
+}
 
 type Props = {};
 export default class App extends Component<Props> {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>Welcome to React Native!</Text>
-        <Text style={styles.instructions}>To get started, edit App.js</Text>
-        <Text style={styles.instructions}>{instructions}</Text>
-      </View>
-    );
-  }
+	state = {
+		isModalVisible: false
+	};
+
+	constructor(props) {
+		super(props);
+		this.pokemon_stats = [];
+	}
+
+	cardAction = () => { };
+
+	viewAction = (pokemon, image) => {
+		this.pokemon_stats = [];
+		pokemon_stats.forEach(item => {
+			this.pokemon_stats.push({
+				label: item,
+				value: getRandomInt(25, 150)
+			});
+		});
+
+		this.setState({
+			pokemon,
+			image,
+			stats: this.pokemon_stats,
+			isModalVisible: true
+		});
+	};
+
+	bookmarkAction = () => { };
+
+	shareAction = () => { };
+
+	closeModal = () => {
+		this.setState({
+			isModalVisible: false
+		});
+	};
+
+	render() {
+		return (
+			<View style={styles.container}>
+				<Header title={"Poke-Gallery"} />
+				<CardList
+					data={pokemon}
+					cardAction={this.cardAction}
+					viewAction={this.viewAction}
+					bookmarkAction={this.bookmarkAction}
+					shareAction={this.shareAction}
+				/>
+				<AnimatedModal
+					title={"View Pokemon"}
+					visible={this.state.isModalVisible}
+					onClose={() => {
+						this.setState({
+							isModalVisible: false
+						});
+					}}
+				>
+					<BigCard
+						title={this.state.pokemon}
+						image={this.state.image}
+						data={this.state.stats}
+					/>
+				</AnimatedModal>
+			</View>
+		);
+	}
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
+const styles = {
+	container: {
+		flex: 1,
+		backgroundColor: "#fff"
+	}
+};
